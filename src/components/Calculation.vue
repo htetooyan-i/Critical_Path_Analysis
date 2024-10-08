@@ -1,6 +1,6 @@
 <template>
     <div class="mt-10 sm:rounded-lg px-10">
-        <div class="max-w-2xl mx-auto">
+        <div class="max-w-2xl mx-auto" v-if="tasks.length > 0">
             <button
                 class="py-2 w-full border border-black hover:bg-black hover:text-white transition-all duration-300"
                 @click="getData"
