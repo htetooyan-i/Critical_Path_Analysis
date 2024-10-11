@@ -133,6 +133,22 @@ export const useTaskStore = defineStore("task", () => {
     tasks.value.splice(taskIndex, 1);
   };
 
+  const finalCheckDepends = () => {
+    tasks.value.forEach((task) => {
+      if (task.depends.length > 0) {
+        task.depends.forEach((depend) => {
+          const existTasks = tasks.value.find(
+            (task) => task.activity.toLowerCase() == depend.toLowerCase(),
+          );
+          if (!existTasks) {
+            ExistTasks.value.push(depend);
+            taskExistError.value = true;
+          }
+        });
+      }
+    });
+  };
+
   return {
     tasks,
     activity,
@@ -149,5 +165,6 @@ export const useTaskStore = defineStore("task", () => {
     checkTaskExist,
     taskExistError,
     ExistTasks,
+    finalCheckDepends,
   };
 });

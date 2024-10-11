@@ -99,7 +99,7 @@ import { useCalculationStore } from "@/stores/calculations";
 import { storeToRefs } from "pinia";
 
 const taskStore = useTaskStore();
-const { tasks } = storeToRefs(taskStore);
+const { tasks, taskExistError, ExistTasks } = storeToRefs(taskStore);
 
 const calculationStore = useCalculationStore();
 const {
@@ -114,7 +114,10 @@ const getData = async () => {
     taskData.value = [];
     projectDuration.value = "";
     criticalPath.value = [];
-    calculationStore.showCalculation();
+    taskStore.finalCheckDepends();
+    if (taskExistError.value == false) {
+        calculationStore.showCalculation();
+    }
 
     // Wait for the DOM to update before scrolling
     await nextTick();
