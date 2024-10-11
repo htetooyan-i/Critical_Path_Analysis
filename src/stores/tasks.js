@@ -38,8 +38,8 @@ export const useTaskStore = defineStore("task", () => {
   };
 
   const checkTaskExist = () => {
-    const dependsArr = depends.value.split(",").map((item) => item.trim());
-    console.log(dependsArr); // Log the array of dependencies
+    ExistTasks.value = [];
+    let dependsArr = depends.value.split(",").map((item) => item.trim());
 
     if (Array.isArray(dependsArr) && dependsArr.length > 0) {
       dependsArr.forEach((depend) => {
@@ -48,9 +48,10 @@ export const useTaskStore = defineStore("task", () => {
         );
 
         if (filteredTasks.length == 0 && dependsArr.length != 1) {
-          console.log("Error");
           ExistTasks.value.push(depend);
           taskExistError.value = true;
+        } else {
+          taskExistError.value = false;
         }
       });
     }
