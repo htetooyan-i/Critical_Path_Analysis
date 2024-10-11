@@ -16,6 +16,7 @@ export const useTaskStore = defineStore("task", () => {
 
   const addTasks = () => {
     let dependsArray = depends.value.split(",");
+    dependsArray = dependsArray.map((item) => item.trim());
     dependsArray = [...new Set(dependsArray)];
 
     const filteredDepends = dependsArray.filter(
@@ -112,11 +113,14 @@ export const useTaskStore = defineStore("task", () => {
           task.activity.toLowerCase() === editActivity.value.toLowerCase(),
       );
       const dependsArray = depends.value.split(",");
-      const filteredDepends = dependsArray.filter(
+      let filteredDepends = dependsArray.filter(
         (depend) => depend.trim() !== "",
       );
+      filteredDepends = filteredDepends.map((item) => item.trim());
+      filteredDepends = [...new Set(filteredDepends)];
+
       tasks.value[taskIndex].activity = activity.value;
-      tasks.value[taskIndex].depends = [...new Set(filteredDepends)];
+      tasks.value[taskIndex].depends = filteredDepends;
       tasks.value[taskIndex].duration = duration.value;
     }
   };
