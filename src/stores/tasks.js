@@ -31,7 +31,7 @@ export const useTaskStore = defineStore("task", () => {
 
   const checkActivity = () => {
     const filteredActivity = tasks.value.filter(
-      (task) => task.activity == activity.value,
+      (task) => task.activity.toLowerCase() == activity.value.toLowerCase(),
     );
     if (filteredActivity.length != 0) {
       existTask.value = true;
@@ -54,7 +54,8 @@ export const useTaskStore = defineStore("task", () => {
         dependsArr.forEach((depend) => {
           const filteredTasks = tasks.value.filter(
             (task) =>
-              task.activity === depend && task.activity != activity.value,
+              task.activity.toLowerCase() === depend.toLowerCase() &&
+              task.activity.toLowerCase() != activity.value.toLowerCase(),
           );
           if (filteredTasks.length == 0 && dependsArr.length != 0) {
             ExistTasks.value.push(depend);
@@ -66,7 +67,7 @@ export const useTaskStore = defineStore("task", () => {
       } else {
         dependsArr.forEach((depend) => {
           const filteredTasks = tasks.value.filter(
-            (task) => task.activity === depend,
+            (task) => task.activity.toLowerCase() === depend.toLowerCase(),
           );
           if (filteredTasks.length == 0 && dependsArr.length != 0) {
             ExistTasks.value.push(depend);

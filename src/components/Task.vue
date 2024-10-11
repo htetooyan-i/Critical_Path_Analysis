@@ -27,8 +27,8 @@
                     v-for="task in tasks"
                     :key="task.activity"
                 >
-                    <td class="px-6 py-4">{{ task.activity }}</td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 capitalize">{{ task.activity }}</td>
+                    <td class="px-6 py-4 capitalize">
                         <span v-if="task.depends.length < 1"> - </span>
                         <span v-else>
                             <span
