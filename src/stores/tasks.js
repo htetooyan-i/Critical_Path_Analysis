@@ -15,7 +15,9 @@ export const useTaskStore = defineStore("task", () => {
   const ExistTasks = ref([]);
 
   const addTasks = () => {
-    const dependsArray = depends.value.split(",");
+    let dependsArray = depends.value.split(",");
+    dependsArray = [...new Set(dependsArray)];
+
     const filteredDepends = dependsArray.filter(
       (depend) => depend.trim() !== "",
     );
@@ -39,21 +41,40 @@ export const useTaskStore = defineStore("task", () => {
 
   const checkTaskExist = () => {
     ExistTasks.value = [];
+
     let dependsArr = depends.value.split(",").map((item) => item.trim());
 
-    if (Array.isArray(dependsArr) && dependsArr.length > 0) {
-      dependsArr.forEach((depend) => {
-        const filteredTasks = tasks.value.filter(
-          (task) => task.activity === depend,
-        );
+    if (dependsArr[dependsArr.length - 1] == "") {
+      dependsArr.pop();
+    }
 
-        if (filteredTasks.length == 0 && dependsArr.length != 1) {
-          ExistTasks.value.push(depend);
-          taskExistError.value = true;
-        } else {
-          taskExistError.value = false;
-        }
-      });
+    if (Array.isArray(dependsArr) && dependsArr.length > 0) {
+      if (isEditing.value == true) {
+        dependsArr.forEach((depend) => {
+          const filteredTasks = tasks.value.filter(
+            (task) =>
+              task.activity === depend && task.activity != activity.value,
+          );
+          if (filteredTasks.length == 0 && dependsArr.length != 0) {
+            ExistTasks.value.push(depend);
+            taskExistError.value = true;
+          } else {
+            taskExistError.value = false;
+          }
+        });
+      } else {
+        dependsArr.forEach((depend) => {
+          const filteredTasks = tasks.value.filter(
+            (task) => task.activity === depend,
+          );
+          if (filteredTasks.length == 0 && dependsArr.length != 0) {
+            ExistTasks.value.push(depend);
+            taskExistError.value = true;
+          } else {
+            taskExistError.value = false;
+          }
+        });
+      }
     }
   };
 
@@ -95,7 +116,7 @@ export const useTaskStore = defineStore("task", () => {
         (depend) => depend.trim() !== "",
       );
       tasks.value[taskIndex].activity = activity.value;
-      tasks.value[taskIndex].depends = filteredDepends;
+      tasks.value[taskIndex].depends = [...new Set(filteredDepends)];
       tasks.value[taskIndex].duration = duration.value;
     }
   };

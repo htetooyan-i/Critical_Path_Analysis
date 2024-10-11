@@ -102,13 +102,16 @@ const submitTask = () => {
 };
 
 const update = () => {
-    taskStore.updateTask();
-    Activity.value = activity.value;
-    if (existTask.value == false) {
-        depends.value = "";
-        activity.value = "";
-        duration.value = "";
-        taskError.value = false;
+    taskStore.checkTaskExist();
+    if (taskExistError.value == false) {
+        taskStore.updateTask();
+        Activity.value = activity.value;
+        if (existTask.value == false) {
+            depends.value = "";
+            activity.value = "";
+            duration.value = "";
+            taskError.value = false;
+        }
     }
 };
 
