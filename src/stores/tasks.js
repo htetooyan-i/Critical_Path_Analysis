@@ -11,6 +11,8 @@ export const useTaskStore = defineStore("task", () => {
   const isEditing = ref(false);
   const editActivity = ref("");
   const taskError = ref(false);
+  const taskExistError = ref(false);
+  const ExistTasks = ref([]);
 
   const addTasks = () => {
     const dependsArray = depends.value.split(",");
@@ -32,6 +34,25 @@ export const useTaskStore = defineStore("task", () => {
       existTask.value = true;
     } else {
       existTask.value = false;
+    }
+  };
+
+  const checkTaskExist = () => {
+    const dependsArr = depends.value.split(",").map((item) => item.trim());
+    console.log(dependsArr); // Log the array of dependencies
+
+    if (Array.isArray(dependsArr) && dependsArr.length > 0) {
+      dependsArr.forEach((depend) => {
+        const filteredTasks = tasks.value.filter(
+          (task) => task.activity === depend,
+        );
+
+        if (filteredTasks.length == 0 && dependsArr.length != 1) {
+          console.log("Error");
+          ExistTasks.value.push(depend);
+          taskExistError.value = true;
+        }
+      });
     }
   };
 
@@ -98,5 +119,8 @@ export const useTaskStore = defineStore("task", () => {
     updateTask,
     taskError,
     deleteTask,
+    checkTaskExist,
+    taskExistError,
+    ExistTasks,
   };
 });

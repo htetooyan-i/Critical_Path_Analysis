@@ -124,7 +124,7 @@ export const useCalculationStore = defineStore("calculation", () => {
       // Get dependencies for the current task
       let depends = taskData.value[currentTask]?.depends || []; // Use optional chaining to avoid errors
       let maxDuration = 0;
-      let longestTask = "";
+      let criticalDependency = "";
 
       // If there is exactly one dependency, add it directly to the critical path
       if (depends.length === 1) {
@@ -133,25 +133,22 @@ export const useCalculationStore = defineStore("calculation", () => {
         i++; // Increment index to move to the next task
         continue; // Skip to the next iteration
       }
-      // If there are multiple dependencies, find the longest one
+      // If there are multiple dependencies, find the one that matches the critical path (based on ES and EF)
       else if (depends.length > 1) {
         let j = 0; // Initialize an index for dependencies
         while (j < depends.length) {
           const task = depends[j];
 
-          // Check if the current task's duration is greater than the max found so far
-          if (
-            taskData.value[task].duration > maxDuration &&
-            taskData.value[task].EF == taskData.value[currentTask].ES
-          ) {
-            maxDuration = taskData.value[task].duration; // Update maxDuration
-            longestTask = taskData.value[task].activity; // Store the longest task name
+          // Check if the dependency's EF matches the current task's ES (critical path condition)
+          if (taskData.value[task].EF === taskData.value[currentTask].ES) {
+            criticalDependency = task; // Store the task on the critical path
+            break; // Break out of the loop once the correct dependency is found
           }
           j++; // Increment the dependency index
         }
-        if (longestTask) {
-          criticalPath.value.push(longestTask);
-          currentTask = longestTask;
+        if (criticalDependency) {
+          criticalPath.value.push(criticalDependency);
+          currentTask = criticalDependency;
         }
         i++; // Increment index to move to the next task
       } else {
@@ -160,30 +157,6 @@ export const useCalculationStore = defineStore("calculation", () => {
       }
     }
 
-    // for (let i = 0; i < allCriticalPathTasks.value.length; i++) {
-    //   const currentTask = allCriticalPathTasks.value[i];
-    //   const currentEF = taskData.value[currentTask].EF;
-
-    //   // Always include the current task initially
-    //   criticalPath.value.push(currentTask);
-
-    //   while (i + 1 < allCriticalPathTasks.value.length) {
-    //     const nextTask = allCriticalPathTasks.value[i + 1];
-    //     const nextES = taskData.value[nextTask].ES;
-
-    //     // Check if current EF matches next ES
-    //     if (currentEF === nextES) {
-    //       // If they match, break to continue with the next task
-    //       break;
-    //     } else {
-    //       // If they don't match, remove the next task from the list
-    //       console.log(`Removing: ${nextTask}`);
-    //       allCriticalPathTasks.value.splice(i + 1, 1); // Remove the next task from the list
-    //       // No need to increment 'i' since we want to check the new next task again
-    //     }
-    //   }
-    // }
-    //
     displayCalculation.value = true;
     projectDuration.value = totalProjectTime;
     criticalPath.value = [...criticalPath.value].reverse();

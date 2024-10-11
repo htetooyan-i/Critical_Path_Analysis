@@ -51,6 +51,12 @@
                 >{{ Activity }} is already Exist!! Please enter new task or edit
                 the existing task.</span
             >
+            <span class="text-red-500" v-if="taskExistError"
+                ><span v-for="existTask in ExistTasks"
+                    >{{ existTask }} &nbsp;</span
+                >
+                are not exist in your task table.</span
+            >
         </div>
         <div>
             <button
@@ -74,8 +80,17 @@ import { useTaskStore } from "@/stores/tasks";
 import { storeToRefs } from "pinia";
 
 const taskStore = useTaskStore();
-const { tasks, activity, depends, duration, existTask, isEditing, taskError } =
-    storeToRefs(taskStore);
+const {
+    tasks,
+    activity,
+    depends,
+    duration,
+    existTask,
+    isEditing,
+    taskError,
+    taskExistError,
+    ExistTasks,
+} = storeToRefs(taskStore);
 
 const Activity = ref("");
 const submitTask = () => {
@@ -99,15 +114,18 @@ const update = () => {
 
 const addTask = () => {
     taskStore.checkActivity();
-    if (existTask.value == false) {
-        taskStore.addTasks();
-        depends.value = "";
-        activity.value = "";
-        duration.value = "";
-        taskError.value = false;
-    } else {
-        Activity.value = activity.value;
-        taskError.value = true;
+    taskStore.checkTaskExist();
+    if (taskExistError.value == false) {
+        if (existTask.value == false) {
+            taskStore.addTasks();
+            depends.value = "";
+            activity.value = "";
+            duration.value = "";
+            taskError.value = false;
+        } else {
+            Activity.value = activity.value;
+            taskError.value = true;
+        }
     }
 };
 </script>
